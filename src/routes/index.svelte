@@ -1,2 +1,42 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+  import type { pokeman } from '../stores/pokestore'
+  import { pokemon } from '../stores/pokestore'
+  import PokemanCard from '../components/pokemanCard.svelte'
+
+  let searchTerm = ''
+  let filteredPokemon: Array<pokeman> = []
+
+  const filterPokemon = (pokemon: Array<pokeman>, query: string) => {
+    if (!query) return pokemon
+
+    return pokemon.filter((pokeman) =>
+      pokeman.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }
+
+  $: {
+    filteredPokemon = filterPokemon($pokemon, searchTerm)
+  }
+</script>
+
+<svelte:head>
+  <title>Svelte Kit Pokedex</title>
+</svelte:head>
+
+<h1 class="text-4xl text-center my-8 uppercase">Svelte Kit Pokedex</h1>
+
+<input
+  class="w-full rounded-md text-lg p-4 border-2 border-gray-200"
+  type="text"
+  bind:value={searchTerm}
+  placeholder="Search Pokemon"
+/>
+
+<div class="py-4 grid gap-4 md:grid-cols-2 grid-cols-1">
+  {#each filteredPokemon as pokeman}
+    <PokemanCard {pokeman} />
+  {/each}
+</div>
+
+<style>
+</style>
